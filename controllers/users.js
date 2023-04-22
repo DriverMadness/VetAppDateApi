@@ -11,6 +11,16 @@ export const getUser = async (req, res) => {
   }
 };
 
+export const getUserPage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
 export const getUserFriends = async (req, res) => {
   try {
     const { id } = req.params;
@@ -108,17 +118,30 @@ export const addRemoveFriend = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
+    const { firstName, lastName, location, picturePath } = req.body;
     const { id } = req.params;
-    const { twitter, linkedIn } = req.body;
-    console.log("69", twitter, linkedIn);
     const user = await User.findByIdAndUpdate(
       id,
-      { twitter, linkedIn },
+      { firstName, lastName, location, picturePath },
       { new: true }
     );
-
     res.status(200).json(user);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+export const searchUsers = async (req, res) => {
+  try {
+    const { firstName, lastName } = req.query;
+    const users = await User.find({
+      $or: [
+        { firstName: new RegExp(firstName, "i") },
+        { lastName: new RegExp(lastName, "i") },
+      ],
+    });
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
   }
 };
