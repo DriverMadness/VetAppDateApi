@@ -62,6 +62,21 @@ export const getUserFriends = async (req, res) => {
   }
 };
 
+export const updateUser = async (req, res) => {
+  try {
+    const { firstName, lastName, location, picturePath } = req.body;
+    const { id } = req.params;
+    const user = await User.findByIdAndUpdate(
+      id,
+      { firstName, lastName, location, picturePath },
+      { new: true }
+    );
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
 /* UPDATE */
 export const addRemoveFriend = async (req, res) => {
   try {
@@ -113,21 +128,6 @@ export const addRemoveFriend = async (req, res) => {
     res.status(200).json(formattedFriends);
   } catch (err) {
     res.status(404).json({ message: err.message });
-  }
-};
-
-export const updateUser = async (req, res) => {
-  try {
-    const { firstName, lastName, location, picturePath } = req.body;
-    const { id } = req.params;
-    const user = await User.findByIdAndUpdate(
-      id,
-      { firstName, lastName, location, picturePath },
-      { new: true }
-    );
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(404).json({ message: error.message });
   }
 };
 
